@@ -8,5 +8,11 @@ else
     echo ">> no keypair needed.  you gots one"
 fi
 
+echo ">> updating strings"
+cd $HOME/locale
+svn up
+cd $HOME
+./locale/compile-json.sh locale/ code/resources/static/i18n/
+
 echo ">> generating production resources"
-scripts/compress
+code/scripts/compress
