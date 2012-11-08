@@ -5,5 +5,16 @@
 // These are tests to ignore
 
 exports.tests_to_ignore = [
+  "add-primary-to-primary.js",
+  "add-primary-to-secondary.js",
+  "cancel-account.js",
+  "change-password-test.js",
+  "frontend-qunit-test.js",
+  "new-user-primary-test.js",
+  "new-user-secondary-test.js",
   "public-terminals.js"
+  "remove-email.js",
+  "reset-password-test.js",
+  "returning-user.js",
+  "sign-in-test.js"
 ];
