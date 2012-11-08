@@ -12,7 +12,7 @@ exports.tests_to_ignore = [
   "frontend-qunit-test.js",
   "new-user-primary-test.js",
   "new-user-secondary-test.js",
-  "public-terminals.js"
+  "public-terminals.js",
   "remove-email.js",
   "reset-password-test.js",
   "returning-user.js",
