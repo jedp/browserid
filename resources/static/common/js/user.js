@@ -35,7 +35,7 @@ BrowserID.User = (function() {
   }
 
   // remove identities that are no longer valid
-  function cleanupIdentities(cb) {
+  function cleanupIdentities(onSuccess, onFailure) {
     network.serverTime(function(serverTime) {
       network.domainKeyCreationTime(function(creationTime) {
         // Determine if a certificate is expired.  That will be
@@ -66,7 +66,7 @@ BrowserID.User = (function() {
         var emails = storage.getEmails(forceIssuer);
         var issued_identities = {};
         prepareDeps();
-        _(emails).each(function(email_obj, email_address) {
+        _.each(emails, function(email_obj, email_address) {
           try {
             email_obj.pub = jwcrypto.loadPublicKeyFromObject(email_obj.pub);
           } catch (x) {
@@ -95,12 +95,9 @@ BrowserID.User = (function() {
             }
           }
         });
-        cb();
-      }, function(e) {
-        // we couldn't get domain key creation time!  uh oh.
-        cb();
-      });
-    });
+        onSuccess();
+      }, onFailure);
+    }, onFailure);
   }
 
   function stageAddressVerification(email, password, stagingStrategy, onComplete, onFailure) {
@@ -166,8 +163,8 @@ BrowserID.User = (function() {
         // completed verification. See issue #1682
         // https://github.com/mozilla/browserid/issues/1682
         User.authenticate(stagedEmail, stagedPassword, function(authenticated) {
-          // The address verification poll does not send back a userid if
-          // the status is mustAuth. use the userid set in onContextChange.
+          // The address verification poll does not send back a userid.
+          // Use the userid set in User.authenticate
           resp.userid = userid;
           resp.status = authenticated ? "complete" : "mustAuth";
           completeVerification(resp);
@@ -193,6 +190,9 @@ BrowserID.User = (function() {
           if (resp.status === "complete" && authStatus !== "password")
             resp.status = "mustAuth";
 
+          // The address verification poll does not send back a userid.
+          // use the userid set in onContextChange.
+          resp.userid = userid;
           completeVerification(resp);
         }, onFailure);
       }
@@ -209,8 +209,17 @@ BrowserID.User = (function() {
       // they just completed a registration.
       registrationComplete = true;
 
+      // If the status is still complete, the user's auth status is
+      // definitively password.
       if (resp.status === "complete") {
         setAuthenticationStatus("password", resp.userid);
+      }
+
+      // If there is any sort of userid and auth_status, sync the emails.
+      // If the user has to enter their password and status is mustAuth,
+      // the required_email module expects the emails to already be synced.
+      // See issue #3178
+      if (userid && auth_status) {
         User.syncEmails(function() {
           complete(onSuccess, resp.status);
         }, onFailure);
@@ -1008,7 +1017,7 @@ BrowserID.User = (function() {
           });
           complete(onComplete);
         }, onFailure);
-      });
+      }, onFailure);
     },
 
     /**
