@@ -151,6 +151,13 @@ BrowserID.Modules.Dialog = (function() {
     return parsedTime;
   }
 
+  function validateBoolean(bool, name) {
+    if (typeof bool !== "boolean") {
+      throw new Error("invalid value for " + name + ": " + bool);
+    }
+
+    return bool;
+  }
 
   var Dialog = bid.Modules.PageModule.extend({
     start: function(options) {
@@ -267,24 +274,28 @@ BrowserID.Modules.Dialog = (function() {
           user.setReturnTo(returnTo);
         }
 
-        // forceIssuer is used by the Marketplace to disable primary support
-        // and replace fxos.login.persona.org as the issuer of certs
-        if (paramsFromRP.forceIssuer) {
-          params.forceIssuer = fixupIssuer(paramsFromRP.forceIssuer);
-        }
-
         // forceAuthentication is used by the Marketplace to ensure that the
         // user knows the password to this account. We ignore any active session.
-        if (paramsFromRP.forceAuthentication &&
-            true === paramsFromRP.forceAuthentication) {
-          params.forceAuthentication = true;
+        if (paramsFromRP.experimental_forceAuthentication) {
+          params.forceAuthentication = validateBoolean(
+              paramsFromRP.experimental_forceAuthentication,
+              "experimental_forceAuthentication");
+        }
+
+        // forceIsuser is used by the Marketplace to disable primary support
+        // and replace fxos.login.persona.org as the issuer of certs
+        if (paramsFromRP.experimental_forceIssuer) {
+          params.forceIssuer =
+              fixupIssuer(paramsFromRP.experimental_forceIssuer);
         }
 
         // allowUnverified means that the user doesn't need to have
         // verified their email address in order to send an assertion.
         // if the user *has* verified, it will be a verified assertion.
-        if (paramsFromRP.allowUnverified) {
-          params.allowUnverified = true;
+        if (paramsFromRP.experimental_allowUnverified) {
+          params.allowUnverified = validateBoolean(
+              paramsFromRP.experimental_allowUnverified,
+              "experimental_allowUnverified");
         }
 
         if (hash.indexOf("#AUTH_RETURN") === 0) {

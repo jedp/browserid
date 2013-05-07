@@ -544,6 +544,43 @@
     });
   });
 
+  asyncTest("experimental_forceAuthentication", function() {
+    testExpectGetSuccess(
+      {experimental_forceAuthentication: true},
+      {forceAuthentication: true}
+    );
+  });
+
+  asyncTest("experimental_forceAuthentication invalid", function() {
+    testExpectGetFailure(
+      {experimental_forceAuthentication: "true"});
+  });
+
+  asyncTest("get with valid issuer - allowed", function() {
+    var issuer = "fxos.persona.org";
+    testExpectGetSuccess(
+      { experimental_forceIssuer: issuer },
+      { forceIssuer: issuer }
+    );
+  });
+
+  asyncTest("get with non hostname issuer - bzzzt", function() {
+    var issuer = "https://issuer.must.be.a.hostname";
+    testExpectGetFailure({ experimental_forceIssuer: issuer });
+  });
+
+  asyncTest("experimental_allowUnverified", function() {
+    testExpectGetSuccess(
+      {experimental_allowUnverified: true},
+      {allowUnverified: true}
+    );
+  });
+
+  asyncTest("experimental_allowUnverified invalid", function() {
+    testExpectGetFailure(
+      {experimental_allowUnverified: "true"});
+  });
+
   asyncTest("get with valid rp_api - allowed", function() {
     createController({
       ready: function() {
