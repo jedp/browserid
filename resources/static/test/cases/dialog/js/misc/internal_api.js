@@ -192,7 +192,7 @@
     xhr.setContextInfo("userid", 1);
     storage.addEmail(TEST_EMAIL);
 
-    storage.site.set(ORIGIN, "logged_in", TEST_EMAIL);
+    storage.setLoggedIn(ORIGIN, TEST_EMAIL);
     storage.site.set(ORIGIN, "email", TEST_EMAIL);
     storage.site.set(ORIGIN, "issuer", "fxos_issuer");
 
@@ -250,7 +250,7 @@
     xhr.setContextInfo("userid", 1);
     storage.addEmail(TEST_EMAIL);
 
-    storage.site.set(ORIGIN, "logged_in", TEST_EMAIL);
+    storage.setLoggedIn(ORIGIN, TEST_EMAIL);
     storage.site.set(ORIGIN, "email", TEST_EMAIL);
     var und;
 
@@ -280,7 +280,7 @@
     xhr.setContextInfo("userid", 1);
     storage.addEmail(TEST_EMAIL);
 
-    storage.site.set(ORIGIN, "logged_in", TEST_EMAIL);
+    storage.setLoggedIn(ORIGIN, TEST_EMAIL);
     storage.site.set(ORIGIN, "email", TEST_EMAIL);
     var und;
 
